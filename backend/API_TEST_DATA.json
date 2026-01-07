@@ -1,0 +1,175 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "testWalletAddress": "addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+  "testStakeAddress": "stake_test1uz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5qyq5z5l",
+  
+  "authentication": {
+    "connectWallet": {
+      "endpoint": "POST /api/auth/connect-wallet",
+      "url": "http://localhost:3000/api/auth/connect-wallet",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "walletAddress": "addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+        "stakeAddress": "stake_test1uz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5qyq5z5l",
+        "signature": "test_signature_placeholder"
+      }
+    },
+    "getCurrentUser": {
+      "endpoint": "GET /api/auth/me",
+      "url": "http://localhost:3000/api/auth/me",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    }
+  },
+
+  "savings": {
+    "getUserSavings": {
+      "endpoint": "GET /api/savings/:walletAddress",
+      "url": "http://localhost:3000/api/savings/addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "getGroupTotal": {
+      "endpoint": "GET /api/savings/group/total",
+      "url": "http://localhost:3000/api/savings/group/total",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    }
+  }
+}
+    "prepareDeposit": {
+      "endpoint": "POST /api/savings/deposit/prepare",
+      "url": "http://localhost:3000/api/savings/deposit/prepare",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      },
+      "body": {
+        "amount": 100
+      }
+    },
+    "getUserStreak": {
+      "endpoint": "GET /api/savings/streak/:walletAddress",
+      "url": "http://localhost:3000/api/savings/streak/addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    }
+  },
+
+  "loans": {
+    "getLoanStatus": {
+      "endpoint": "GET /api/loan/status/:walletAddress",
+      "url": "http://localhost:3000/api/loan/status/addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "requestLoan": {
+      "endpoint": "POST /api/loan/request",
+      "url": "http://localhost:3000/api/loan/request",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      },
+      "body": {
+        "amount": 500,
+        "durationDays": 30
+      }
+    },
+    "repayLoan": {
+      "endpoint": "POST /api/loan/repay",
+      "url": "http://localhost:3000/api/loan/repay",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      },
+      "body": {
+        "amount": 200,
+        "loanUtxoRef": "abc123def456...#0"
+      }
+    }
+  },
+
+  "investments": {
+    "listInvestments": {
+      "endpoint": "GET /api/investment/list",
+      "url": "http://localhost:3000/api/investment/list",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "getInvestment": {
+      "endpoint": "GET /api/investment/:id",
+      "url": "http://localhost:3000/api/investment/INV-001",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "registerInvestment": {
+      "endpoint": "POST /api/investment/register",
+      "url": "http://localhost:3000/api/investment/register",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      },
+      "body": {
+        "projectName": "Solar Farm Project",
+        "amount": 10000,
+        "expectedROI": 15
+      }
+    }
+  },
+
+  "rewards": {
+    "getUserBadges": {
+      "endpoint": "GET /api/rewards/:walletAddress",
+      "url": "http://localhost:3000/api/rewards/addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "claimStreakBadge": {
+      "endpoint": "POST /api/rewards/claim/:badgeType",
+      "url": "http://localhost:3000/api/rewards/claim/streak",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "claimEarlyRepayBadge": {
+      "endpoint": "POST /api/rewards/claim/:badgeType",
+      "url": "http://localhost:3000/api/rewards/claim/early-repay",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    },
+    "checkEligibility": {
+      "endpoint": "GET /api/rewards/eligibility/:walletAddress",
+      "url": "http://localhost:3000/api/rewards/eligibility/addr_test1qz8fg2e9yn0ga68wq7vjz5x7wnl5cq0p8xrm0lv5lvz5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5q5z5l5qyq5z5l",
+      "method": "GET",
+      "headers": {
+        "Authorization": "Bearer YOUR_JWT_TOKEN_HERE"
+      }
+    }
+  }
+}

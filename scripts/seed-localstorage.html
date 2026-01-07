@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Seed Safe-Save localStorage (dev)</title>
+  <style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:24px}button{padding:12px 16px;border-radius:8px;border:none;background:#06b6d4;color:white;font-weight:600;cursor:pointer}</style>
+</head>
+<body>
+  <h2>Seed Safe-Save localStorage (development)</h2>
+  <p>Click the button to populate browser <strong>localStorage</strong> with demo users, loans, deposits and repayments used by the app.</p>
+  <div style="display:flex;gap:8px">
+    <button id="seed">Seed demo data</button>
+    <button id="sanitize" style="background:#10b981">Sanitize data</button>
+    <button id="copyScript" style="background:#6366f1">Copy seed script</button>
+    <button id="forceSeed" style="background:#ef4444">Force seed (overwrite)</button>
+  </div>
+  <pre id="out" style="margin-top:16px;background:#f5f7fb;padding:12px;border-radius:8px;white-space:pre-wrap"></pre>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+    console.log('[seeder] DOMContentLoaded — attaching handlers');
+    const outEl = document.getElementById('out');
+    const seedBtn = document.getElementById('seed');
+    const sanitizeBtn = document.getElementById('sanitize');
+    const copyBtn = document.getElementById('copyScript');
+    const forceBtn = document.getElementById('forceSeed');
+    if (!seedBtn) { console.error('[seeder] seed button not found'); }
+    if (!sanitizeBtn) { console.error('[seeder] sanitize button not found'); }
+    function seedData() {
+      console.log('[seeder] seedData running');
+      try {
+        const users = [
+          {
+            id: 1,
+            name: 'Alice Mukamana',
+            fullName: 'Alice Mukamana',
+            email: 'alice@email.com',
+            phone: '+250 788 123 456',
+            joinDate: 'Jan 15, 2025',
+            status: 'active',
+            walletBalance: 2200,
+            savings: 5017.778,
+            loanBalance: 1500,
+            loans: [
+              { id: 'loan-1', amount: 1500, purpose: 'Start business', duration: '6 months', status: 'active', requestedAt: '2025-09-01' }
+            ],
+            rating: 95,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 2,
+            name: 'Bob Kamanzi',
+            fullName: 'Bob Kamanzi',
+            email: 'bob@email.com',
+            phone: '+250 788 234 567',
+            joinDate: 'Feb 3, 2025',
+            status: 'active',
+            walletBalance: 1500,
+            savings: 4667.778,
+            loanBalance: 350,
+            loans: [],
+            rating: 88,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 3,
+            name: 'Carol Shimwa',
+            fullName: 'Carol Shimwa',
+            email: 'carol@email.com',
+            phone: '+250 788 345 678',
+            joinDate: 'Mar 10, 2025',
+            status: 'active',
+            walletBalance: 1100,
+            savings: 3977.778,
+            loanBalance: 500,
+            loans: [ { id: 'loan-2', amount: 500, purpose: 'Medical', duration: '3 months', status: 'active', requestedAt: '2025-10-01' } ],
+            rating: 92,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 4,
+            name: 'David Niyonzima',
+            fullName: 'David Niyonzima',
+            email: 'david@email.com',
+            phone: '+250 788 456 789',
+            joinDate: 'Apr 5, 2025',
+            status: 'active',
+            walletBalance: 350,
+            savings: 0,
+            loanBalance: 0,
+            loans: [],
+            rating: 70,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 5,
+            name: 'Emma Uwera',
+            fullName: 'Emma Uwera',
+            email: 'emma@email.com',
+            phone: '+250 788 567 890',
+            joinDate: 'May 20, 2025',
+            status: 'active',
+            walletBalance: 1300,
+            savings: 3627.778,
+            loanBalance: 0,
+            loans: [],
+            rating: 90,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 6,
+            name: 'John Habimana',
+            fullName: 'John Habimana',
+            email: 'john@email.com',
+            phone: '+250 788 678 901',
+            joinDate: 'Nov 28, 2025',
+            status: 'active',
+            walletBalance: 520,
+            savings: 0,
+            loanBalance: 0,
+            loans: [],
+            rating: 60,
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: 7,
+            name: 'Sarah Uwase',
+            fullName: 'Sarah Uwase',
+            email: 'sarah@email.com',
+            phone: '+250 788 789 012',
+            joinDate: 'Nov 29, 2025',
+            status: 'active',
+            walletBalance: 420,
+            savings: 0,
+            loanBalance: 70,
+            loans: [],
+            rating: 65,
+            createdAt: new Date().toISOString()
+          }
+        ];
+
+        // Sanitize and prepare demo storage values
+        // Ensure numeric fields are non-negative and normalize savings arrays
+        users.forEach(u => {
+          u.walletBalance = Math.max(0, Number(u.walletBalance || 0));
+          if (Array.isArray(u.savings)) {
+            u.savings = u.savings.map(s => ({ amount: Math.max(0, Number(s.amount || 0)), date: s.date || new Date().toISOString() }));
+            u.totalSavings = u.savings.reduce((a,b)=>a+Number(b.amount||0),0);
+          } else {
+            u.savings = Math.max(0, Number(u.savings || 0));
+            u.totalSavings = Math.max(0, Number(u.savings || 0));
+          }
+          u.loanBalance = Math.max(0, Number(u.loanBalance || 0));
+          if (Array.isArray(u.loans)) u.loans = u.loans.map(l => ({ ...l, amount: Math.max(0, Number(l.amount || 0)) })); else u.loans = [];
+        });
+
+        // Manually set approved members' savings amounts (explicit values)
+        // Manually set approved members' savings amounts (explicit values to match member tab)
+        const approvedMembers = [
+          { id: users[0].id, name: users[0].name, email: users[0].email, totalSavings: 5017.778, savings: [{ amount: 5017.778, date: new Date().toISOString() }], joinDate: users[0].joinDate, status: users[0].status },
+          { id: users[1].id, name: users[1].name, email: users[1].email, totalSavings: 4667.778, savings: [{ amount: 4667.778, date: new Date().toISOString() }], joinDate: users[1].joinDate, status: users[1].status },
+          { id: users[2].id, name: users[2].name, email: users[2].email, totalSavings: 3977.778, savings: [{ amount: 3977.778, date: new Date().toISOString() }], joinDate: users[2].joinDate, status: users[2].status },
+          { id: users[3].id, name: users[3].name, email: users[3].email, totalSavings: 0, savings: [{ amount: 0, date: new Date().toISOString() }], joinDate: users[3].joinDate, status: users[3].status },
+          { id: users[4].id, name: users[4].name, email: users[4].email, totalSavings: 3627.778, savings: [{ amount: 3627.778, date: new Date().toISOString() }], joinDate: users[4].joinDate, status: users[4].status },
+          { id: users[5].id, name: users[5].name, email: users[5].email, totalSavings: 0, savings: [{ amount: 0, date: new Date().toISOString() }], joinDate: users[5].joinDate, status: users[5].status },
+          { id: users[6].id, name: users[6].name, email: users[6].email, totalSavings: 0, savings: [{ amount: 0, date: new Date().toISOString() }], joinDate: users[6].joinDate, status: users[6].status }
+        ];
+
+        // Sync users objects to match manual approvedMembers so both keys align
+        users.forEach((u) => {
+          const match = approvedMembers.find(m => m.email === u.email);
+          if (match) {
+            u.totalSavings = Number(match.totalSavings || 0);
+            u.savings = Array.isArray(u.savings) ? u.savings : [{ amount: Number(match.totalSavings || 0), date: new Date().toISOString() }];
+          }
+        });
+
+        // Expose seeded arrays on window so the copy button and other helpers can access them
+        try { window.__seedApprovedMembers = approvedMembers; window.__seedUsers = users; } catch (e) { /* ignore */ }
+
+        const pendingLoanRequests = [
+          { id: 'rq-' + Date.now(), amount: 2000, purpose: 'School fees', duration: '6 months', status: 'pending', requestedAt: new Date().toISOString(), requestedBy: 'mark@example.com' }
+        ];
+
+        const loanRepaymentsAlice = [
+          { date: 'Oct 01, 2025', amount: 300, status: 'paid', onTime: true, loanId: 'loan-1' },
+          { date: 'Nov 01, 2025', amount: 200, status: 'paid', onTime: true, loanId: 'loan-1' }
+        ];
+
+        const loanRepaymentsCarol = [
+          { date: 'Sep 15, 2025', amount: 100, status: 'paid', onTime: true, loanId: 'loan-2' }
+        ];
+
+        const depositHistoryAlice = [
+          { date: 'Dec 01, 2025', amount: 200, streak: 1 },
+          { date: 'Nov 25, 2025', amount: 150, streak: 2 }
+        ];
+
+        const depositHistoryBob = [
+          { date: 'Dec 02, 2025', amount: 120, streak: 1 }
+        ];
+
+        // Write sanitized data to localStorage
+        localStorage.setItem('safe_save_users', JSON.stringify(users));
+        try { window.dispatchEvent(new Event('safe_save_users_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_approved_members', JSON.stringify(approvedMembers));
+        try { window.dispatchEvent(new Event('safe_save_approved_members_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_loan_requests', JSON.stringify(pendingLoanRequests));
+        try { window.dispatchEvent(new Event('safe_save_loan_requests_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_loan_repayments_' + users[0].email, JSON.stringify(loanRepaymentsAlice));
+        try { window.dispatchEvent(new Event('safe_save_loan_repayments_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_loan_repayments_' + users[2].email, JSON.stringify(loanRepaymentsCarol));
+        try { window.dispatchEvent(new Event('safe_save_loan_repayments_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_deposit_history_' + users[0].email, JSON.stringify(depositHistoryAlice));
+        try { window.dispatchEvent(new Event('safe_save_deposit_history_updated')); } catch (e) {}
+
+        localStorage.setItem('safe_save_deposit_history_' + users[1].email, JSON.stringify(depositHistoryBob));
+        try { window.dispatchEvent(new Event('safe_save_deposit_history_updated')); } catch (e) {}
+
+        // Ensure investments key exists (app expects this)
+        localStorage.setItem('safe_save_investments', JSON.stringify([]));
+        try { window.dispatchEvent(new Event('safe_save_investments_updated')); } catch (e) {}
+
+        // Build a simple savings history map for demo (optional, used by some views)
+        const savingsHistory = {};
+        users.forEach(u => {
+          savingsHistory[u.email] = {
+            total: Number(u.totalSavings || 0),
+            lastDeposit: (Array.isArray(u.savings) && u.savings.length) ? u.savings[u.savings.length-1] : { amount: Number(u.savings || 0), date: new Date().toISOString() }
+          };
+        });
+        localStorage.setItem('safe_save_savings_history', JSON.stringify(savingsHistory));
+        try { window.dispatchEvent(new Event('safe_save_savings_history_updated')); } catch (e) {}
+
+        // Set current user to Alice for quick testing
+        localStorage.setItem('safe_save_current_user', JSON.stringify(users[0]));
+        try { window.dispatchEvent(new Event('safe_save_current_user_updated')); } catch (e) {}
+
+        if (outEl) {
+          outEl.textContent = 'Seeded localStorage with sanitized demo data.\nKeys set:\n- safe_save_users\n- safe_save_approved_members\n- safe_save_loan_requests\n- safe_save_loan_repayments_{email}\n- safe_save_deposit_history_{email}\n- safe_save_investments\n- safe_save_savings_history\n- safe_save_current_user\n(Events dispatched to update open app pages)';
+        }
+
+        // Dispatch a combined custom event for same-tab listeners
+        try { window.dispatchEvent(new CustomEvent('safe_save_all_updated', { detail: { users, approvedMembers } })); } catch (e) {}
+
+        // Open the app index so the admin UI picks up the seeded data
+        try {
+          const opened = window.open('../index.html', '_blank');
+          if (!opened) console.warn('[seeder] could not open new tab; pop-up blocked');
+        } catch(e) { console.error('[seeder] open app failed', e); }
+
+        alert('Demo data seeded (sanitized). App opened in a new tab (or update the app tab).');
+      } catch (err) {
+        console.error(err);
+        alert('Seeding failed. See console for details.');
+      }
+    }
+
+    seedBtn?.addEventListener('click', seedData);
+
+    copyBtn?.addEventListener('click', () => {
+      try {
+        // Prefer the in-memory approved members exposed by seedData
+        const approved = (window.__seedApprovedMembers && Array.isArray(window.__seedApprovedMembers))
+          ? window.__seedApprovedMembers
+          : JSON.parse(localStorage.getItem('safe_save_approved_members') || '[]');
+
+        const snippet = `(function(){\n  const approved = ${JSON.stringify(approved)};\n  localStorage.setItem('safe_save_approved_members', JSON.stringify(approved));\n  const users = JSON.parse(localStorage.getItem('safe_save_users')||'[]');\n  const newUsers = users.map(u=>{const m=approved.find(a=>a.email===u.email);if(m){return {...u,totalSavings:m.totalSavings,savings:Array.isArray(u.savings)&&u.savings.length?u.savings:[{amount:m.totalSavings,date:new Date().toISOString()}]};}return u;});\n  localStorage.setItem('safe_save_users', JSON.stringify(newUsers));\n  try{window.dispatchEvent(new Event('safe_save_approved_members_updated'));window.dispatchEvent(new Event('safe_save_users_updated'));}catch(e){}\n  alert('Seed applied in this tab. Reload UI if needed.');\n})();`;
+
+        // Try navigator.clipboard first, fallback to execCommand
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(snippet).then(()=>{
+            if (outEl) outEl.textContent = 'Seed script copied to clipboard — paste into the app tab console to apply.';
+            alert('Seed script copied. Paste it into the app tab console (DevTools) and press Enter.');
+          }).catch(() => {
+            // fallback
+            const ta = document.createElement('textarea'); ta.value = snippet; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); if (outEl) outEl.textContent = 'Seed script copied to clipboard (fallback).'; alert('Seed script copied (fallback). Paste into app console.'); } catch (e) { alert('Copy failed — paste the script manually.'); } ta.remove();
+          });
+        } else {
+          const ta = document.createElement('textarea'); ta.value = snippet; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); if (outEl) outEl.textContent = 'Seed script copied to clipboard (fallback).'; alert('Seed script copied (fallback). Paste into app console.'); } catch (e) { alert('Copy failed — paste the script manually.'); } ta.remove();
+        }
+      } catch (e) {
+        console.error('Copy failed', e);
+        alert('Failed to copy script — open the seeder file and run in app console manually.');
+      }
+    });
+
+    // Force-seed: overwrite storage with simple demo data and notify UI
+    forceBtn?.addEventListener('click', () => {
+      try {
+        const anyUsers = [
+          { id: 1, name: 'Alice Mukamana', email: 'alice@email.com', walletBalance: 2200, savings: 5017.778, loanBalance: 1500, loans: [], rating:95, joinDate:'Jan 15, 2025' },
+          { id: 2, name: 'Bob Kamanzi', email: 'bob@email.com', walletBalance:1500, savings:4667.778, loanBalance:0, loans:[], rating:88, joinDate:'Feb 3, 2025' },
+          { id: 3, name: 'Carol Shimwa', email: 'carol@email.com', walletBalance:1100, savings:3977.778, loanBalance:500, loans:[], rating:92, joinDate:'Mar 10, 2025' },
+          { id: 4, name: 'David Niyonzima', email: 'david@email.com', walletBalance:350, savings:0, loanBalance:0, loans:[], rating:70, joinDate:'Apr 5, 2025' },
+        ];
+
+        const approved = anyUsers.map(u => ({ id: u.id, name: u.name, email: u.email, totalSavings: Number(u.savings || 0), savings: [{ amount: Number(u.savings || 0), date: new Date().toISOString() }], joinDate: u.joinDate, status: 'active' }));
+
+        localStorage.setItem('safe_save_users', JSON.stringify(anyUsers));
+        localStorage.setItem('safe_save_approved_members', JSON.stringify(approved));
+        localStorage.setItem('safe_save_investments', JSON.stringify([]));
+        localStorage.setItem('safe_save_savings_history', JSON.stringify({}));
+        localStorage.setItem('safe_save_current_user', JSON.stringify(anyUsers[0]));
+
+        try { window.dispatchEvent(new Event('safe_save_users_updated')); } catch(e){}
+        try { window.dispatchEvent(new Event('safe_save_approved_members_updated')); } catch(e){}
+        try { window.dispatchEvent(new CustomEvent('safe_save_all_updated', { detail: { users: anyUsers, approved } })); } catch(e){}
+
+        if (outEl) outEl.textContent = 'Force-seeded demo data (overwrote storage). Open app tab to see updates.';
+
+        try { window.open('../index.html', '_blank'); } catch(e){}
+        alert('Force-seeded demo data. Open the app tab or reload to view.');
+      } catch (e) {
+        console.error('Force seed failed', e);
+        alert('Force seed failed — see console');
+      }
+    });
+
+    sanitizeBtn?.addEventListener('click', () => {
+      console.log('[seeder] sanitize clicked');
+      try {
+        const usersRaw = localStorage.getItem('safe_save_users');
+        const users = usersRaw ? JSON.parse(usersRaw) : [];
+
+        users.forEach(u => {
+          u.walletBalance = Math.max(0, Number(u.walletBalance || 0));
+          if (Array.isArray(u.savings)) {
+            u.savings = u.savings.map(s => ({ amount: Math.max(0, Number(s.amount || 0)), date: s.date || new Date().toISOString() }));
+            u.totalSavings = u.savings.reduce((a,b)=>a+Number(b.amount||0),0);
+          } else {
+            u.savings = Math.max(0, Number(u.savings || 0));
+            u.totalSavings = Math.max(0, Number(u.savings || 0));
+          }
+          u.loanBalance = Math.max(0, Number(u.loanBalance || 0));
+          if (Array.isArray(u.loans)) u.loans = u.loans.map(l => ({ ...l, amount: Math.max(0, Number(l.amount || 0)) })); else u.loans = [];
+        });
+
+        localStorage.setItem('safe_save_users', JSON.stringify(users));
+        try { window.dispatchEvent(new Event('safe_save_users_updated')); } catch (e) {}
+
+        // Update approved members to reflect sanitized users.
+        // If no approved members exist, create them from users so admin views show demo data.
+        const approvedRaw = localStorage.getItem('safe_save_approved_members');
+        const approved = approvedRaw ? JSON.parse(approvedRaw) : [];
+        let synced = [];
+        if (Array.isArray(approved) && approved.length > 0) {
+          synced = approved.map(m => {
+            const user = users.find((u) => u.email === m.email) || m;
+            const savingsArr = Array.isArray(user.savings) ? user.savings : [{ amount: Number(user.savings || user.totalSavings || 0), date: new Date().toISOString() }];
+              return { ...m, savings: savingsArr, totalSavings: savingsArr.reduce((a,b)=>a+Number(b.amount||0),0) };
+          });
+        } else {
+          synced = users.map(u => ({
+            id: u.id,
+            name: u.name,
+            email: u.email,
+            totalSavings: Number(u.totalSavings || 0),
+            savings: Array.isArray(u.savings) ? u.savings : [{ amount: Number(u.savings || 0), date: new Date().toISOString() }],
+            joinDate: u.joinDate,
+            status: u.status,
+          }));
+        }
+        localStorage.setItem('safe_save_approved_members', JSON.stringify(synced));
+        try { window.dispatchEvent(new Event('safe_save_approved_members_updated')); } catch (e) {}
+
+        // Update current user if present
+        try {
+          const cur = JSON.parse(localStorage.getItem('safe_save_current_user') || 'null');
+          if (cur && cur.email) {
+            const fresh = users.find((u) => u.email === cur.email) || cur;
+            localStorage.setItem('safe_save_current_user', JSON.stringify(fresh));
+            try { window.dispatchEvent(new Event('safe_save_current_user_updated')); } catch (e) {}
+          }
+        } catch(e){}
+
+        // Ensure investments and savings history keys exist and reflect sanitized data
+        if (!localStorage.getItem('safe_save_investments')) {
+          localStorage.setItem('safe_save_investments', JSON.stringify([]));
+          try { window.dispatchEvent(new Event('safe_save_investments_updated')); } catch (e) {}
+        }
+
+        const savingsHistory = {};
+        users.forEach(u => {
+          const savingsArr = Array.isArray(u.savings) ? u.savings : [{ amount: Number(u.savings || u.totalSavings || 0), date: new Date().toISOString() }];
+          savingsHistory[u.email] = {
+            total: Number(u.totalSavings || savingsArr.reduce((a,b)=>a+Number(b.amount||0),0)),
+            lastDeposit: (savingsArr.length ? savingsArr[savingsArr.length-1] : { amount: 0, date: new Date().toISOString() })
+          };
+        });
+        localStorage.setItem('safe_save_savings_history', JSON.stringify(savingsHistory));
+        try { window.dispatchEvent(new Event('safe_save_savings_history_updated')); } catch (e) {}
+
+        if (outEl) outEl.textContent = 'Sanitized localStorage:\n- safe_save_users updated\n- safe_save_approved_members updated\n- safe_save_current_user updated\n- safe_save_investments ensured\n- safe_save_savings_history updated';
+
+        alert('Sanitized localStorage: negative balances clamped and approved members synced.');
+      } catch (err) {
+        console.error(err);
+        alert('Sanitize failed — see console for details');
+      }
+    });
+    
+    // Auto-run seeder immediately and unconditionally (small delay)
+    try {
+      console.log('[seeder] auto-running seedData() unconditionally');
+      if (outEl) outEl.textContent = 'Auto-running seeder...';
+      setTimeout(() => {
+        try { seedData(); } catch (e) { console.error('[seeder] auto seedData() failed', e); if (outEl) outEl.textContent = 'Auto-seed failed — see console.'; }
+      }, 150);
+    } catch (e) {
+      console.error('[seeder] auto-run failed', e);
+    }
+
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+=== Smart Saving Deployment Started at Sat, Nov 29, 2025 10:05:56 AM ===
+[0;34m
+╔══════════════════════════════════════════════════════════════╗
+║              Smart Saving - Contract Deployment              ║
+║                    aine/smart-saving project                 ║
+╚══════════════════════════════════════════════════════════════╝
+[0m
+[1;33mChecking prerequisites...[0m
+[0;32mAll tools ready[0m
+
+[1;33mBuilding contracts...[0m
+    Compiling aine/smart-saving 0.0.0 (C:\Users\aine\Downloads\codes\challenges\smart-saving)
+    Compiling aiken-lang/stdlib v3.0.0 (C:\Users\aine\Downloads\codes\challenges\smart-saving\build\packages\aiken-lang-stdlib)
+   Generating project's blueprint (C:\Users\aine\Downloads\codes\challenges\smart-saving\plutus.json)
+[0;32mBuild complete[0m
+
+[1;33mExtracting validators...[0m
+  → [0;36msavings[0m
+[0;32m     savings.spend extracted[0m

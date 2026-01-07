@@ -1,0 +1,17 @@
+﻿aiken :     Compiling 
+aine/smart-saving 0.0.0 (C:\
+Users\aine\Downloads\codes\c
+hallenges\smart-saving)
+At line:1 char:1
++ aiken check 2>&1 | 
+Out-File -FilePath 
+error.txt -Encoding utf8
++ ~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (    C  
+  ompiling a...s\smart-sa   
+ ving):String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
